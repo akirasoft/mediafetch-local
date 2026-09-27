@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediaFetch</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='85'>⬇</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ── TOP NAV ── -->
+  <header class="topnav">
+    <div class="topnav-brand">
+      <div class="brand-mark">↓</div>
+      <span class="brand-name">MediaFetch</span>
+    </div>
+
+    <nav class="topnav-nav">
+      <a class="tnav-link active" href="#" data-i18n="nav_discover">Keşfet</a>
+      <a class="tnav-link" href="#downloadsSection" data-i18n="nav_downloads">İndirmeler</a>
+    </nav>
+
+    <div class="topnav-actions">
+      <div class="lang-switcher">
+        <button class="lang-btn" data-lang="tr">TR</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="es">ES</button>
+      </div>
+      <span class="version-badge" id="versionBadge">yt-dlp</span>
+      <button class="btn-settings" id="btnSettings" data-i18n-title="btn_settings_title" title="Settings">
+        ⚙<span class="update-dot" id="updateDot" hidden></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── BODY ── -->
+  <div class="body-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="sb-section">
+        <button class="sb-item sb-active" data-i18n="nav_discover">Keşfet</button>
+      </div>
+
+      <div class="sb-section">
+        <p class="sb-label" data-i18n="sb_platforms">Platformlar</p>
+        <button class="sb-item platform-item" data-name="YouTube" data-url="youtube.com,youtu.be">
+          <span class="sb-dot" style="--c:#ff2d2d"></span> YouTube
+        </button>
+        <button class="sb-item platform-item" data-name="SoundCloud" data-url="soundcloud.com">
+          <span class="sb-dot" style="--c:#ff5500"></span> SoundCloud
+        </button>
+        <button class="sb-item platform-item" data-name="Twitter/X" data-url="twitter.com,x.com">
+          <span class="sb-dot" style="--c:#1d9bf0"></span> Twitter / X
+        </button>
+        <button class="sb-item platform-item" data-name="Instagram" data-url="instagram.com">
+          <span class="sb-dot" style="--c:#e1306c"></span> Instagram
+        </button>
+        <button class="sb-item platform-item" data-name="TikTok" data-url="tiktok.com,vm.tiktok.com">
+          <span class="sb-dot" style="--c:#69c9d0"></span> TikTok
+        </button>
+        <button class="sb-item platform-item" data-name="Vimeo" data-url="vimeo.com">
+          <span class="sb-dot" style="--c:#1ab7ea"></span> Vimeo
+        </button>
+        <button class="sb-item platform-item" data-name="Twitch" data-url="twitch.tv">
+          <span class="sb-dot" style="--c:#9147ff"></span> Twitch
+        </button>
+      </div>
+
+      <div class="sb-section">
+        <p class="sb-label" data-i18n="sb_format">Format</p>
+        <button class="sb-item sb-format-hint" data-type="audio">
+          <span class="sb-dot" style="--c:#3558E8"></span> <span data-i18n="fmt_audio_hint">MP3 — Ses</span>
+        </button>
+        <button class="sb-item sb-format-hint" data-type="video">
+          <span class="sb-dot" style="--c:#7c3aed"></span> <span data-i18n="fmt_video_hint">MP4 — Video</span>
+        </button>
+      </div>
+
+      <div class="sb-section sb-history">
+        <div class="sb-label-row">
+          <p class="sb-label" data-i18n="sb_history">Son İndirmeler</p>
+          <button class="sb-clear-btn" id="btnClearHistory" title="✕"></button>
+        </div>
+        <div id="historyList" class="hist-list">
+          <div class="hist-empty" data-i18n="hist_empty">Henüz indirme yok</div>
+        </div>
+      </div>
+
+      <div class="sb-section sb-bottom">
+        <p class="sb-label" data-i18n="sb_saveto">Kayıt Yeri</p>
+        <div class="sb-dir-wrap">
+          <input type="text" id="outputDir" class="sb-dir-input" placeholder="~/Downloads">
+          <button class="sb-dir-default" id="btnDefaultDir" title="↺">↺</button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-meta">
+          <span class="hero-meta-dot"></span>
+          <span data-i18n="hero_meta_sites">1.000+ site desteklenir</span>
+          <span class="hero-meta-sep">·</span>
+          <span id="heroFfmpegStatus" data-i18n="hero_meta_ffmpeg">ffmpeg birleştirme aktif</span>
+        </div>
+
+        <h1 class="hero-heading"><span data-i18n="hero_h1">Müzik &amp; Video</span><br><span data-i18n="hero_h2">İndirin.</span></h1>
+        <p class="hero-sub">
+          <span data-i18n="hero_sub_1">YouTube, SoundCloud, Instagram ve daha fazlasından</span><br>
+          <span data-i18n="hero_sub_2">yüksek kalite, tek tıkla.</span>
+        </p>
+
+        <div class="url-stage" id="urlStage">
+          <input
+            type="text"
+            id="urlInput"
+            class="url-input"
+            data-i18n-placeholder="url_placeholder"
+            placeholder="URL yapıştırın — YouTube, SoundCloud, Twitter/X, Instagram…"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button class="url-paste-btn" id="btnPaste" data-i18n-title="btn_paste_title" title="Panodan yapıştır">📋</button>
+          <button class="url-analyze-btn" id="btnAnalyze">
+            <span class="btn-text" data-i18n="btn_analyze">Analiz Et</span>
+            <span class="btn-spinner" hidden>↻</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Info Panel (hidden until URL analyzed) -->
+      <section class="info-panel" id="infoCard" hidden>
+        <div class="playlist-banner" id="playlistBanner" hidden>
+          <span class="playlist-icon">📃</span>
+          <span id="playlistText"></span>
+        </div>
+        <div class="info-video-row">
+          <img class="info-thumb" id="thumbnail" src="" alt="">
+          <div class="info-meta">
+            <h2 class="info-title" id="videoTitle"></h2>
+            <p class="info-channel" id="videoUploader"></p>
+            <p class="info-dur" id="videoDuration"></p>
+          </div>
+        </div>
+
+        <div class="format-section">
+          <div class="format-tabs">
+            <button class="fmt-tab active" data-type="audio" data-i18n="tab_audio">🎵 Müzik (MP3)</button>
+            <button class="fmt-tab" data-type="video" data-i18n="tab_video">🎬 Video (MP4)</button>
+          </div>
+          <div class="format-grid" id="formatGrid"></div>
+
+          <label class="editor-toggle" id="editorOption" hidden>
+            <input type="checkbox" id="chkSeparateAudio">
+            <span class="editor-toggle-body">
+              <strong data-i18n="editor_strong">Editörler için</strong><span data-i18n="editor_desc"> — Ses ve videoyu ayrı dosya olarak indir</span>
+              <em id="editorAudioLabel">Video + Ses (WAV)</em>
+            </span>
+          </label>
+        </div>
+
+        <button class="btn-download" id="btnDownload" disabled data-i18n="btn_download">⬇ İndir</button>
+      </section>
+
+      <!-- Downloads -->
+      <section class="dl-section" id="downloadsSection" hidden>
+        <div class="dl-section-head">
+          <h2 class="dl-section-title" data-i18n="dl_section_title">İndirmeler</h2>
+        </div>
+        <div class="dl-list" id="downloadList"></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-backdrop" id="settingsModal" hidden>
+  <div class="modal settings-modal">
+    <div class="modal-head">
+      <span data-i18n="settings_title">Settings</span>
+      <button id="btnCloseSettings">✕</button>
+    </div>
+    <div class="settings-body">
+
+      <div class="settings-section">
+        <p class="settings-section-label" data-i18n="settings_updates">yt-dlp Updates</p>
+
+        <div class="version-info-row">
+          <div class="version-col">
+            <span class="ver-label" data-i18n="version_current">Current</span>
+            <span class="ver-val" id="settingCurrentVer">—</span>
+          </div>
+          <div class="version-col" id="latestVerCol" hidden>
+            <span class="ver-label" data-i18n="version_latest">Latest</span>
+            <span class="ver-val ver-new" id="settingLatestVer">—</span>
+          </div>
+          <span class="ver-badge-ok" id="verUpToDate" hidden data-i18n="version_up_to_date">✓ Up to date</span>
+        </div>
+
+        <div class="update-actions">
+          <button class="btn-check-update" id="btnCheckUpdate">
+            <span class="btn-text" data-i18n="btn_check_updates">Check for Updates</span>
+            <span class="btn-spinner" hidden>↻</span>
+          </button>
+          <button class="btn-install-update" id="btnInstallUpdate" hidden data-i18n="btn_install_update">⬇ Install Update</button>
+        </div>
+
+        <label class="setting-row">
+          <span class="setting-label" data-i18n="setting_auto_update">Automatically check for updates on startup</span>
+          <span class="toggle">
+            <input type="checkbox" id="settingAutoUpdate">
+            <span class="toggle-track"></span>
+          </span>
+        </label>
+
+        <p class="settings-privacy-note" data-i18n="settings_privacy_note">Updates connect directly to github.com/yt-dlp — no intermediary server. Binary is verified with SHA256 before replacing.</p>
+      </div>
+
+      <div class="update-log-wrap" id="updateLogWrap" hidden>
+        <div class="update-progress-track" id="updateProgressTrack" hidden>
+          <div class="update-progress-fill" id="updateProgressFill" style="width:0%"></div>
+        </div>
+        <pre class="log-area" id="updateLogArea"></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
